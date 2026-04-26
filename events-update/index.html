@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Announcements | AIS OneSpot</title>
+    <meta
+      name="description"
+      content="Campus announcements for AIS OneSpot with sample public filters and a future-ready staff publishing panel."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="topbar-copy">American International School of Costa Rica</div>
+          <div>hello@aisonespot.com | +1 (619) 214 8612</div>
+        </div>
+      </div>
+
+      <header class="header">
+        <div class="header-inner">
+          <a class="brand" href="../index.html" aria-label="AIS OneSpot Home">
+            <img class="brand-mark" src="../assets/logo-square.png" alt="AIS crest" />
+            <div class="brand-copy">
+              <strong>AIS OneSpot</strong>
+              <span>Your all-in-one school companion</span>
+            </div>
+          </a>
+
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded="false"
+            data-menu-toggle
+          >
+            <span>Menu</span>
+          </button>
+
+          <nav class="nav" data-nav aria-label="Primary">
+            <a href="../index.html">Home</a>
+            <a href="index.html" aria-current="page">Announcements</a>
+            <a href="../upcoming-news/index.html">News &amp; Events</a>
+            <a href="../google-schedule/index.html">Google Schedule</a>
+            <a href="../after-school-programs/index.html">After-School Programs</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="page-hero">
+          <div class="page-hero-inner">
+            <div class="eyebrow">Announcements</div>
+            <h1>Campus announcements</h1>
+            <p>
+              This public page is the future core of the migration. Phase 1 preserves the public
+              look and filtering feel; phase 2 will connect it to real staff-managed storage.
+            </p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-inner">
+            <div class="section-heading">
+              <div class="small-label">Filters</div>
+              <h2>Browse by type</h2>
+              <p>
+                The public feed reads from Supabase. Only published, active, public announcements
+                appear here.
+              </p>
+            </div>
+
+            <div class="filter-panel">
+              <button class="filter-button is-active" type="button" data-filter="all">All</button>
+              <button class="filter-button" type="button" data-filter="urgent">Urgent</button>
+              <button class="filter-button" type="button" data-filter="general">General</button>
+              <button class="filter-button" type="button" data-filter="students">Students</button>
+              <button class="filter-button" type="button" data-filter="staff">Staff</button>
+            </div>
+
+            <div class="announcement-grid">
+              <div class="announcement-list">
+                <div class="empty-state is-hidden" id="public-announcements-empty">
+                  No public announcements match this filter yet.
+                </div>
+                <div id="public-announcements-list" class="announcement-list"></div>
+              </div>
+
+              <aside class="panel">
+                <div class="card-meta">Staff publishing panel</div>
+                <h3>Prototype admin workflow</h3>
+                <p>
+                  The admin prototype is live now. Staff can draft, publish, schedule, archive, and
+                  delete announcements there, and the public feed here updates from the same records.
+                </p>
+
+                <div style="margin: 1rem 0 1.2rem">
+                  <a class="button button-primary" href="../admin/index.html">Open staff admin</a>
+                </div>
+
+                <form class="form-mock">
+                  <div class="field">
+                    <label for="title">Announcement Title (short text)</label>
+                    <input id="title" type="text" value="Create and manage this in Staff Admin" readonly />
+                  </div>
+
+                  <div class="field">
+                    <label for="message">Message (multi-line text)</label>
+                    <textarea id="message" readonly>Published records appear on this public page automatically.</textarea>
+                  </div>
+
+                  <div class="field">
+                    <label>Visibility</label>
+                    <div class="radio-row">
+                      <div class="radio-pill">Public feed</div>
+                      <div class="radio-pill">Staff only</div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="timestamp">Timestamp</label>
+                    <input id="timestamp" type="text" value="Generated by the stored record" readonly />
+                  </div>
+
+                  <div class="field">
+                    <label>Priority</label>
+                    <div class="radio-row">
+                      <div class="radio-pill">Normal</div>
+                      <div class="radio-pill">High / Urgent</div>
+                    </div>
+                  </div>
+
+                  <div class="field">
+                    <label for="category">Category</label>
+                    <select id="category" disabled>
+                      <option>General</option>
+                    </select>
+                  </div>
+                </form>
+              </aside>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <div class="footer-brand">
+            <div class="footer-logo">
+              <img src="../assets/logo-wide.png" alt="AIS OneSpot logo" />
+            </div>
+          </div>
+          <div class="footer-grid">
+            <div>
+              <h3>Contact</h3>
+              <p>AIS OneSpot</p>
+              <p>International School System</p>
+              <p>Global Student Center</p>
+              <p>hello@aisonespot.com</p>
+              <p>+1 (619) 214 8612</p>
+            </div>
+            <div>
+              <h3>Navigate</h3>
+              <ul class="footer-links">
+                <li><a href="../upcoming-news/index.html">News &amp; Events</a></li>
+                <li><a href="../after-school-programs/index.html">After-School Programs</a></li>
+                <li><a href="../google-schedule/index.html">Google Schedule</a></li>
+                <li><a href="../index.html">Home</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Phase 2 direction</h3>
+              <p>Staff-authored announcements, category filtering, and real public browsing.</p>
+            </div>
+          </div>
+          <div class="footer-note">
+            &copy; 2026 AIS OneSpot. Your All-in-One School Companion. All rights reserved.
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="../announcements.js"></script>
+    <script src="events.js"></script>
+  </body>
+</html>

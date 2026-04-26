@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Admin | AIS OneSpot</title>
+    <meta
+      name="description"
+      content="AIS OneSpot staff admin for creating, publishing, and managing announcements with Supabase."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="topbar-copy">American International School of Costa Rica</div>
+          <div>Staff admin connected to Supabase</div>
+        </div>
+      </div>
+
+      <header class="header">
+        <div class="header-inner">
+          <a class="brand" href="../index.html" aria-label="AIS OneSpot Home">
+            <img class="brand-mark" src="../assets/logo-square.png" alt="AIS crest" />
+            <div class="brand-copy">
+              <strong>AIS OneSpot</strong>
+              <span>Staff announcement console</span>
+            </div>
+          </a>
+
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded="false"
+            data-menu-toggle
+          >
+            <span>Menu</span>
+          </button>
+
+          <nav class="nav" data-nav aria-label="Primary">
+            <a href="../index.html">Home</a>
+            <a href="../events-update/index.html">Public Announcements</a>
+            <a href="index.html" aria-current="page">Staff Admin</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="page-hero">
+          <div class="page-hero-inner">
+            <div class="eyebrow">Phase 2</div>
+            <h1>Staff Admin</h1>
+            <p>
+              Staff members can sign in, manage announcements, and publish to the public page from
+              one place.
+            </p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-inner">
+            <section class="panel" id="auth-panel">
+              <div class="card-meta">Staff authentication</div>
+              <h3>Sign in to manage announcements</h3>
+              <p id="auth-status" class="notice notice-soft">Checking session...</p>
+              <form id="staff-login-form" class="form-mock">
+                <div class="admin-form-grid">
+                  <div class="field">
+                    <label for="staff-full-name">Full name</label>
+                    <input id="staff-full-name" type="text" placeholder="Staff member name" />
+                  </div>
+                  <div class="field">
+                    <label for="staff-email">Staff email</label>
+                    <input id="staff-email" type="email" placeholder="name@school.edu" required />
+                  </div>
+                  <div class="field">
+                    <label for="staff-password">Password</label>
+                    <input id="staff-password" type="password" required />
+                  </div>
+                </div>
+                <div class="admin-form-actions">
+                  <button class="button button-primary" type="submit" id="staff-login-button">Sign in</button>
+                  <button class="button button-secondary" type="button" id="staff-register-button">Register</button>
+                  <button class="button button-secondary" type="button" id="staff-logout-button">Sign out</button>
+                </div>
+              </form>
+            </section>
+
+            <div id="admin-app" class="is-hidden">
+              <div class="admin-toolbar">
+                <div class="admin-toolbar-copy">
+                  <div class="small-label">Controls</div>
+                  <h2>Manage announcements</h2>
+                  <p>
+                    Save drafts, publish immediately or later, archive old posts, and delete anything
+                    that should no longer appear.
+                  </p>
+                </div>
+                <div class="admin-toolbar-actions">
+                  <button class="button button-primary" type="button" id="new-announcement-button">
+                    New announcement
+                  </button>
+                  <button class="button button-secondary" type="button" id="reset-demo-button">
+                    Seed demo data
+                  </button>
+                </div>
+              </div>
+
+              <div class="admin-layout">
+                <section class="panel">
+                  <div class="card-meta">Saved announcements</div>
+                  <div id="admin-empty-state" class="empty-state is-hidden">
+                    No announcements yet.
+                  </div>
+                  <div id="admin-announcements-list" class="admin-list"></div>
+                </section>
+
+                <section class="panel">
+                  <div class="card-meta">Editor</div>
+                  <h3 id="form-heading">Create announcement</h3>
+                  <p id="form-subtitle">
+                    Draft content here first, then publish when you are ready.
+                  </p>
+
+                  <div id="admin-notice" class="notice is-hidden"></div>
+
+                  <form id="announcement-form" class="form-mock">
+                    <input type="hidden" id="announcement-id" />
+                    <input type="hidden" id="announcement-published-at" />
+                    <input type="hidden" id="announcement-created-at" />
+                    <input type="hidden" id="announcement-archived-at" />
+
+                    <div class="field">
+                      <label for="announcement-author">Staff author</label>
+                      <input id="announcement-author" type="text" value="AIS Staff" />
+                    </div>
+
+                    <div class="field">
+                      <label for="announcement-title">Title</label>
+                      <input id="announcement-title" type="text" required />
+                    </div>
+
+                    <div class="field">
+                      <label for="announcement-body">Message</label>
+                      <textarea id="announcement-body" required></textarea>
+                    </div>
+
+                    <div class="admin-form-grid">
+                      <div class="field">
+                        <label for="announcement-category">Category</label>
+                        <select id="announcement-category">
+                          <option value="general">General</option>
+                          <option value="students">Students</option>
+                          <option value="staff">Staff</option>
+                          <option value="urgent">Urgent</option>
+                        </select>
+                      </div>
+
+                      <div class="field">
+                        <label for="announcement-priority">Priority</label>
+                        <select id="announcement-priority">
+                          <option value="normal">Normal</option>
+                          <option value="high">High</option>
+                          <option value="urgent">Urgent</option>
+                        </select>
+                      </div>
+
+                      <div class="field">
+                        <label for="announcement-visibility">Visibility</label>
+                        <select id="announcement-visibility">
+                          <option value="public">Public</option>
+                          <option value="staff">Staff only</option>
+                        </select>
+                      </div>
+
+                      <div class="field">
+                        <label for="announcement-publish-at">Publish at</label>
+                        <input id="announcement-publish-at" type="datetime-local" />
+                      </div>
+
+                      <div class="field">
+                        <label for="announcement-expires-at">Expires at</label>
+                        <input id="announcement-expires-at" type="datetime-local" />
+                      </div>
+
+                      <div class="field field-checkbox">
+                        <label for="announcement-pinned">Pin to top</label>
+                        <input id="announcement-pinned" type="checkbox" />
+                      </div>
+                    </div>
+
+                    <div class="admin-form-actions">
+                      <button class="button button-secondary" type="button" id="save-draft-button">
+                        Save draft
+                      </button>
+                      <button class="button button-primary" type="submit" id="publish-button">
+                        Publish
+                      </button>
+                      <button class="button button-secondary" type="button" id="clear-form-button">
+                        Clear form
+                      </button>
+                    </div>
+                  </form>
+                </section>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <div class="footer-grid">
+            <div>
+              <h3>Supabase note</h3>
+              <p>
+                This page reads and writes directly to Supabase. Configure
+                <code>supabase-config.js</code> before signing in.
+              </p>
+            </div>
+            <div>
+              <h3>Useful links</h3>
+              <ul class="footer-links">
+                <li><a href="../events-update/index.html">Public announcements page</a></li>
+                <li><a href="../docs/announcements-phase-2.md">Phase 2 design doc</a></li>
+                <li><a href="../db/announcements_schema.sql">Schema draft</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3>Scope</h3>
+              <p>Drafts, scheduled publishing, public filters, delete, archive, and seeded demo data.</p>
+            </div>
+          </div>
+          <div class="footer-note">
+            &copy; 2026 AIS OneSpot. Staff workflow for announcements.
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="../announcements.js"></script>
+    <script src="admin.js"></script>
+  </body>
+</html>

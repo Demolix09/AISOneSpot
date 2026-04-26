@@ -1,0 +1,16 @@
+supabase-config.js
+
+# Environment and local secrets
+.env
+.env.*
+!.env.example
+*.local
+
+# Local runtime output
+*.log
+server.out.txt
+server.err.txt
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
