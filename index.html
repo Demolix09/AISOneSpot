@@ -56,9 +56,8 @@
               <div class="eyebrow">AIS OneSpot</div>
               <h1>One place for the school day.</h1>
               <p>
-                This first-phase clone rebuilds the public AIS OneSpot experience as a clean
-                website outside Wix, keeping the school updates, announcements, and after-school
-                information in a format we can later make fully data-driven.
+                AIS OneSpot brings school updates, announcements, and after-school information
+                together in one clear experience for families and staff.
               </p>
               <div class="hero-actions">
                 <a class="button button-primary" href="events-update/index.html">View announcements</a>
@@ -71,8 +70,8 @@
             <aside class="hero-card">
               <h2>What lives here</h2>
               <p>
-                The live Wix site currently acts as a student-family information hub. This clone
-                keeps that shape while preparing it for real staff-managed content later.
+                A focused information hub for the school community with clear navigation and
+                up-to-date content.
               </p>
               <ul class="quick-list">
                 <li>
@@ -102,10 +101,10 @@
           <div class="section-inner">
             <div class="section-heading">
               <div class="small-label">Public Pages</div>
-              <h2>The current site map, rebuilt for a real web stack.</h2>
+              <h2>Everything families need in one place.</h2>
               <p>
-                These are the same five public destinations currently exposed on the Wix site. For
-                phase 1, they stay public-facing and content-stable while we focus on visual parity.
+                Browse announcements, news, schedules, and after-school opportunities quickly from a
+                single shared navigation.
               </p>
             </div>
 
@@ -149,33 +148,90 @@
           <div class="section-inner">
             <div class="section-heading">
               <div class="small-label">Quick Access</div>
-              <h2>Start where families usually start.</h2>
+              <h2>Quick tools for students and teachers.</h2>
             </div>
 
-            <div class="grid-2">
-              <article class="panel">
-                <div class="card-meta">Most active</div>
-                <h3>Campus Announcements</h3>
-                <p>
-                  The future data-backed heart of this project. Phase 1 keeps the public look and
-                  filtering model visible so staff workflows can plug in later.
-                </p>
-                <div style="margin-top: 1rem">
-                  <a class="button button-primary" href="events-update/index.html">Open announcements</a>
-                </div>
-              </article>
+            <div class="filter-panel quick-access-filter" aria-label="Quick access type">
+              <button class="filter-button is-active" type="button" data-quick-access-filter="students">
+                Students
+              </button>
+              <button class="filter-button" type="button" data-quick-access-filter="teachers">
+                Teachers
+              </button>
+            </div>
 
-              <article class="panel">
-                <div class="card-meta">Planning</div>
-                <h3>Staff Admin Prototype</h3>
-                <p>
-                  The announcement workflow now has a working admin console with drafts, publishing,
-                  targeting, archive, and public feed sync.
-                </p>
-                <div style="margin-top: 1rem">
-                  <a class="button button-primary" href="admin/index.html">Open staff admin</a>
+            <div class="quick-access-group is-active" data-quick-access-group="students">
+              <div class="quick-access-grid">
+                <a class="panel quick-tool" href="https://ais.gsecr.com/2/aula/login" target="_blank" rel="noopener noreferrer">
+                  <div class="card-meta">SEDUCA</div>
+                  <h3>Student Grades</h3>
+                  <p>Open the SEDUCA student portal for grades and class progress.</p>
+                </a>
+
+                <a class="panel quick-tool" href="https://mail.google.com/" target="_blank" rel="noopener noreferrer">
+                  <div class="card-meta">School Email</div>
+                  <h3>Gmail Inbox</h3>
+                  <p>Open your school inbox in Google Mail.</p>
+                </a>
+
+                <a class="panel quick-tool" href="https://classroom.google.com/?authuser=0" target="_blank" rel="noopener noreferrer">
+                  <div class="card-meta">Google Classroom</div>
+                  <h3>Class Announcements</h3>
+                  <p>Go directly to your Google Classroom dashboard.</p>
+                </a>
+
+                <a class="panel quick-tool" href="google-schedule/index.html">
+                  <div class="card-meta">Schedule</div>
+                  <h3>Google Schedule</h3>
+                  <p>View the schedule page directly on AIS OneSpot.</p>
+                </a>
+
+                <div class="panel quick-tool quick-tool-disabled" aria-disabled="true">
+                  <div class="card-meta">Cafeteria Menu</div>
+                  <h3>Coming Soon</h3>
+                  <p>The cafeteria menu tool will be available soon.</p>
                 </div>
-              </article>
+              </div>
+            </div>
+
+            <div class="quick-access-group" data-quick-access-group="teachers">
+              <div class="quick-access-grid">
+                <a class="panel quick-tool" href="https://ais.gsecr.com/2/adm/login" target="_blank" rel="noopener noreferrer">
+                  <div class="card-meta">SEDUCA</div>
+                  <h3>Teacher Portal</h3>
+                  <p>Open the SEDUCA teacher portal for class and grade management.</p>
+                </a>
+
+                <a class="panel quick-tool" href="https://mail.google.com/" target="_blank" rel="noopener noreferrer">
+                  <div class="card-meta">School Email</div>
+                  <h3>Gmail Inbox</h3>
+                  <p>Open your school inbox in Google Mail.</p>
+                </a>
+
+                <a class="panel quick-tool" href="https://classroom.google.com/?authuser=0" target="_blank" rel="noopener noreferrer">
+                  <div class="card-meta">Google Classroom</div>
+                  <h3>Class Management</h3>
+                  <p>Go to Google Classroom for classes and assignments.</p>
+                </a>
+
+                <a class="panel quick-tool" href="google-schedule/index.html">
+                  <div class="card-meta">Schedule</div>
+                  <h3>Google Schedule</h3>
+                  <p>View the schedule page directly on AIS OneSpot.</p>
+                </a>
+
+                <div class="panel quick-tool quick-tool-disabled" aria-disabled="true">
+                  <div class="card-meta">Cafeteria Menu</div>
+                  <h3>Coming Soon</h3>
+                  <p>The cafeteria menu tool will be available soon.</p>
+                </div>
+
+                <a class="panel quick-tool" href="admin/index.html">
+                  <div class="card-meta">Staff Admin</div>
+                  <h3>Manage Announcements</h3>
+                  <p>Sign in to create, edit, publish, and delete announcements.</p>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -195,6 +251,18 @@
                 <strong>Mission</strong>
                 <span>Your all-in-one school companion</span>
               </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-inner">
+            <div class="section-heading">
+              <div class="small-label">Social</div>
+              <h2>Instagram</h2>
+            </div>
+            <div class="panel">
+              <div class="sk-instagram-feed" data-embed-id="25676103"></div>
             </div>
           </div>
         </section>
@@ -229,21 +297,22 @@
             </div>
 
             <div>
-              <h3>Phase 1</h3>
+              <h3>Platform</h3>
               <p>
-                Public visual clone rebuilt outside Wix, preparing the site for a later
-                announcements dashboard and real storage.
+                AIS OneSpot is powered by secure staff authentication and centralized announcement
+                management.
               </p>
             </div>
           </div>
 
           <div class="footer-note">
-            © 2026 AIS OneSpot. Your All-in-One School Companion. All rights reserved.
+            &copy; 2026 AIS OneSpot. Your All-in-One School Companion. All rights reserved.
           </div>
         </div>
       </footer>
     </div>
 
     <script src="script.js"></script>
+    <script src="https://widgets.sociablekit.com/instagram-feed/widget.js" defer></script>
   </body>
 </html>

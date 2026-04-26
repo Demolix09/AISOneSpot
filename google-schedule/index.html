@@ -6,7 +6,7 @@
     <title>Google Schedule | AIS OneSpot</title>
     <meta
       name="description"
-      content="AIS OneSpot schedule page with the current Google Calendar destination preserved for phase 1."
+      content="AIS OneSpot schedule page with quick access to the school Google Calendar."
     />
     <link rel="stylesheet" href="../styles.css" />
   </head>
@@ -55,8 +55,7 @@
             <div class="eyebrow">Schedule</div>
             <h1>Google schedule</h1>
             <p>
-              Phase 1 keeps the schedule destination as a dedicated Google Calendar handoff, matching
-              the current site scope while the rest of the platform is migrated out of Wix.
+              Access the school calendar directly in Google Calendar for daily and upcoming events.
             </p>
           </div>
         </section>
@@ -64,22 +63,107 @@
         <section class="section">
           <div class="section-inner">
             <div class="section-heading">
-              <div class="small-label">Current behavior</div>
-              <h2>Schedule access stays tied to Google Calendar for now.</h2>
+              <div class="small-label">Daily Schedule</div>
+              <h2>Filter by division and grade level.</h2>
               <p>
-                The public Wix navigation points users directly into Google Calendar. Since the exact
-                embeddable calendar source is not exposed publicly, this phase preserves that
-                destination and frames it as the schedule hub.
+                Choose a school division, then select the specific grade-level schedule.
               </p>
             </div>
 
-            <div class="panel embed-fallback">
-              <h3>Open the live school calendar</h3>
+            <div class="filter-panel" aria-label="Schedule divisions">
+              <button class="filter-button is-active" type="button" data-schedule-group="early-childhood">
+                Early Childhood
+              </button>
+              <button class="filter-button" type="button" data-schedule-group="elementary">
+                Elementary
+              </button>
+              <button class="filter-button" type="button" data-schedule-group="mshs">
+                MS/HS
+              </button>
+            </div>
+
+            <div class="schedule-subfilters">
+              <div class="filter-panel schedule-subgroup is-active" data-schedule-subgroup="early-childhood">
+                <button
+                  class="filter-button is-active"
+                  type="button"
+                  data-schedule-subfilter="Preschool"
+                >
+                  Preschool
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="Pre-Kinder">
+                  Pre-Kinder
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="Kindergarten">
+                  Kindergarten
+                </button>
+              </div>
+
+              <div class="filter-panel schedule-subgroup" data-schedule-subgroup="elementary">
+                <button
+                  class="filter-button is-active"
+                  type="button"
+                  data-schedule-subfilter="1st Grade"
+                >
+                  1st Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="2nd Grade">
+                  2nd Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="3rd Grade">
+                  3rd Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="4th Grade">
+                  4th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="5th Grade">
+                  5th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="6th Grade">
+                  6th Grade
+                </button>
+              </div>
+
+              <div class="filter-panel schedule-subgroup" data-schedule-subgroup="mshs">
+                <button
+                  class="filter-button is-active"
+                  type="button"
+                  data-schedule-subfilter="7th Grade"
+                >
+                  7th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="8th Grade">
+                  8th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="9th Grade">
+                  9th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="10th Grade">
+                  10th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="11th Grade">
+                  11th Grade
+                </button>
+                <button class="filter-button" type="button" data-schedule-subfilter="Seniors">
+                  Seniors
+                </button>
+              </div>
+            </div>
+
+            <div class="panel schedule-preview">
+              <h3 data-schedule-title>Preschool Daily Schedule</h3>
               <p>
-                Use the same public calendar destination currently linked from the Wix site. A true
-                embedded calendar can be connected later once the public embed URL or calendar ID is
-                available.
+                Daily schedule image preview. This is a placeholder while final schedules are being
+                prepared.
               </p>
+              <img
+                class="schedule-preview-image"
+                src="../assets/schedule-coming-soon.svg"
+                alt="Daily schedule coming soon placeholder"
+              />
+            </div>
+
+            <div class="schedule-bottom-action">
               <a
                 class="button button-primary"
                 href="https://calendar.google.com/calendar/u/0/r?pli=1"
@@ -118,8 +202,8 @@
               </ul>
             </div>
             <div>
-              <h3>Phase 1</h3>
-              <p>The schedule page remains an external Google Calendar handoff until phase 2.</p>
+              <h3>Schedule</h3>
+              <p>Calendar access is available directly through Google Calendar.</p>
             </div>
           </div>
           <div class="footer-note">
@@ -130,5 +214,6 @@
     </div>
 
     <script src="../script.js"></script>
+    <script src="schedule.js"></script>
   </body>
 </html>

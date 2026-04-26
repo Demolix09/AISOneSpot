@@ -28,3 +28,22 @@ if (filterButtons.length && announcementCards.length) {
     });
   });
 }
+
+const quickAccessButtons = document.querySelectorAll("[data-quick-access-filter]");
+const quickAccessGroups = document.querySelectorAll("[data-quick-access-group]");
+
+if (quickAccessButtons.length && quickAccessGroups.length) {
+  quickAccessButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      const selected = button.getAttribute("data-quick-access-filter");
+
+      quickAccessButtons.forEach((item) => item.classList.remove("is-active"));
+      button.classList.add("is-active");
+
+      quickAccessGroups.forEach((group) => {
+        const groupName = group.getAttribute("data-quick-access-group");
+        group.classList.toggle("is-active", groupName === selected);
+      });
+    });
+  });
+}

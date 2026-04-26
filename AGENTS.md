@@ -27,7 +27,7 @@ No framework build step is required for current pages.
 - Shared announcements API: `announcements.js`
 - Supabase config (local): `supabase-config.js`
 - Supabase SQL schema: `db/announcements_schema.sql`
-- Product design notes: `docs/announcements-phase-2.md`
+- Product design notes: `docs/announcements-phase-2.md` (announcements guide)
 
 ## Data Model Notes
 

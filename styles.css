@@ -479,6 +479,38 @@ select {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.schedule-subfilters {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.schedule-subfilters .schedule-subgroup {
+  display: none;
+}
+
+.schedule-subfilters .schedule-subgroup.is-active {
+  display: flex;
+}
+
+.schedule-preview {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.schedule-bottom-action {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+
+.schedule-preview-image {
+  width: 100%;
+  max-width: 960px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface-alt);
+}
+
 .schedule-card ul,
 .news-list,
 .timeline-list {
@@ -511,6 +543,39 @@ select {
   display: flex;
   flex-wrap: wrap;
   gap: 0.7rem;
+}
+
+.quick-access-filter {
+  margin-bottom: 0.4rem;
+}
+
+.quick-access-group {
+  display: none;
+}
+
+.quick-access-group.is-active {
+  display: block;
+}
+
+.quick-access-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.quick-tool {
+  display: block;
+  min-height: 100%;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.quick-tool:hover {
+  transform: translateY(-2px);
+}
+
+.quick-tool-disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
 }
 
 .filter-button {
@@ -845,6 +910,7 @@ select {
   .announcement-grid,
   .schedule-grid,
   .program-grid,
+  .quick-access-grid,
   .grid-3,
   .grid-2,
   .admin-layout,

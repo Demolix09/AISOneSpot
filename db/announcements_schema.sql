@@ -1,4 +1,4 @@
--- AIS OneSpot Phase 2: announcements schema draft
+-- AIS OneSpot announcements schema
 -- Target database: Supabase Postgres
 
 create extension if not exists pgcrypto;

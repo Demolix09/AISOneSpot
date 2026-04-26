@@ -40,7 +40,6 @@
   const form = document.getElementById("announcement-form");
   const saveDraftButton = document.getElementById("save-draft-button");
   const clearFormButton = document.getElementById("clear-form-button");
-  const seedDemoButton = document.getElementById("reset-demo-button");
   const newAnnouncementButton = document.getElementById("new-announcement-button");
 
   let currentUser = null;
@@ -380,26 +379,6 @@
   newAnnouncementButton.addEventListener("click", function () {
     resetForm();
     fields.title.focus();
-  });
-
-  seedDemoButton.addEventListener("click", async function () {
-    if (!window.confirm("Seed demo announcements only if the table is empty?")) {
-      return;
-    }
-
-    try {
-      const result = await api.seedDemoData();
-      await renderList();
-      resetForm();
-
-      if (result.skipped) {
-        showNotice("Skipped demo seed because announcements already exist.", "success");
-      } else {
-        showNotice("Demo data seeded.", "success");
-      }
-    } catch (error) {
-      showNotice(error.message || "Could not seed demo data.", "error");
-    }
   });
 
   listEl.addEventListener("click", async function (event) {

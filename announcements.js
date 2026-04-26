@@ -18,73 +18,6 @@
     staff: "Staff only"
   };
 
-  const DEMO_ROWS = [
-    {
-      id: "95de6e80-a770-4f59-95fc-91669f00ce1d",
-      title: "Campus Network Maintenance: Temporary Outage",
-      body:
-        "Please be advised that the school Wi-Fi network will be offline for mandatory security updates from 4:00 PM to 5:00 PM today.",
-      category: "urgent",
-      visibility: "public",
-      priority: "urgent",
-      status: "published",
-      pinned: true,
-      author_name: "AIS IT Team",
-      publish_at: "2026-04-25T08:45:00.000Z",
-      published_at: "2026-04-25T08:45:00.000Z",
-      expires_at: null,
-      archived_at: null
-    },
-    {
-      id: "e59a4fdb-4820-4832-8ff6-f7e4cc8f4ca7",
-      title: "Spring Arts Festival: Volunteers Needed",
-      body:
-        "We are looking for enthusiastic students and parents to help set up the gallery for our upcoming annual Arts Festival.",
-      category: "general",
-      visibility: "public",
-      priority: "normal",
-      status: "published",
-      pinned: false,
-      author_name: "Activities Office",
-      publish_at: "2026-04-24T15:20:00.000Z",
-      published_at: "2026-04-24T15:20:00.000Z",
-      expires_at: null,
-      archived_at: null
-    },
-    {
-      id: "b3282518-c95d-4c07-8316-f8d8fd0cc8e8",
-      title: "Library Books Return Deadline",
-      body:
-        "Final call for all semester 1 library books. Please ensure all borrowed items are returned to the Center by this Friday.",
-      category: "students",
-      visibility: "public",
-      priority: "high",
-      status: "published",
-      pinned: false,
-      author_name: "Learning Commons",
-      publish_at: "2026-02-10T12:00:00.000Z",
-      published_at: "2026-02-10T12:00:00.000Z",
-      expires_at: null,
-      archived_at: null
-    },
-    {
-      id: "f753f70a-8728-4281-a330-31f94826b9c9",
-      title: "Faculty Duty Rotation Update",
-      body:
-        "Please review the revised lunch and dismissal supervision coverage before tomorrow morning.",
-      category: "staff",
-      visibility: "staff",
-      priority: "normal",
-      status: "published",
-      pinned: false,
-      author_name: "Admin Office",
-      publish_at: "2026-04-23T09:00:00.000Z",
-      published_at: "2026-04-23T09:00:00.000Z",
-      expires_at: null,
-      archived_at: null
-    }
-  ];
-
   let cachedClient = null;
 
   function clone(value) {
@@ -288,26 +221,6 @@
       archivedAt: row.archived_at || "",
       createdAt: row.created_at || "",
       updatedAt: row.updated_at || ""
-    };
-  }
-
-  function feedRowToItem(row) {
-    return {
-      id: row.id || "",
-      title: row.title || "",
-      body: row.body || "",
-      category: normalizeCategory(row.category),
-      status: "published",
-      visibility: "public",
-      priority: normalizePriority(row.priority),
-      pinned: Boolean(row.pinned),
-      authorName: "AIS Staff",
-      publishAt: row.published_at || "",
-      publishedAt: row.published_at || "",
-      expiresAt: row.expires_at || "",
-      archivedAt: "",
-      createdAt: row.published_at || "",
-      updatedAt: row.published_at || ""
     };
   }
 
@@ -627,60 +540,6 @@
     return updated;
   }
 
-  async function seedDemoData() {
-    const client = requireClient();
-    const user = await requireStaffUser();
-
-    const countResult = await client
-      .from("announcements")
-      .select("id", { count: "exact", head: true });
-
-    if (countResult.error) {
-      throw countResult.error;
-    }
-
-    const count = countResult.count || 0;
-    if (count > 0) {
-      return {
-        inserted: 0,
-        skipped: true
-      };
-    }
-
-    const rows = DEMO_ROWS.map(function (item) {
-      return {
-        id: item.id,
-        title: item.title,
-        body: item.body,
-        category: item.category,
-        status: item.status,
-        visibility: item.visibility,
-        priority: item.priority,
-        pinned: item.pinned,
-        author_name: item.author_name,
-        publish_at: item.publish_at,
-        published_at: item.published_at,
-        expires_at: item.expires_at,
-        archived_at: item.archived_at,
-        created_by: user.id,
-        updated_by: user.id
-      };
-    });
-
-    const insertResult = await client
-      .from("announcements")
-      .insert(rows);
-
-    if (insertResult.error) {
-      throw insertResult.error;
-    }
-
-    return {
-      inserted: rows.length,
-      skipped: false
-    };
-  }
-
   window.AISAnnouncements = {
     categoryLabel: categoryLabel,
     deleteAnnouncement: deleteAnnouncement,
@@ -693,9 +552,7 @@
     hydrateScheduledAnnouncements: hydrateScheduledAnnouncements,
     isConfigured: isConfigured,
     onAuthStateChange: onAuthStateChange,
-    resetDemoData: seedDemoData,
     saveAnnouncement: saveAnnouncement,
-    seedDemoData: seedDemoData,
     registerStaff: registerStaff,
     signIn: signIn,
     signOut: signOut,
