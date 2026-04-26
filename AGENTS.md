@@ -22,6 +22,8 @@ No framework build step is required for current pages.
 
 - Public announcements page: `events-update/index.html`
 - Public announcements logic: `events-update/events.js`
+- Staff auth page: `auth/index.html`
+- Staff auth logic: `auth/auth.js`
 - Staff admin page: `admin/index.html`
 - Staff admin logic: `admin/admin.js`
 - Shared announcements API: `announcements.js`

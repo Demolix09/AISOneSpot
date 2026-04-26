@@ -5,15 +5,6 @@
     return;
   }
 
-  const authStatusEl = document.getElementById("auth-status");
-  const loginForm = document.getElementById("staff-login-form");
-  const fullNameField = document.getElementById("staff-full-name");
-  const emailField = document.getElementById("staff-email");
-  const passwordField = document.getElementById("staff-password");
-  const loginButton = document.getElementById("staff-login-button");
-  const registerButton = document.getElementById("staff-register-button");
-  const logoutButton = document.getElementById("staff-logout-button");
-
   const adminAppEl = document.getElementById("admin-app");
   const listEl = document.getElementById("admin-announcements-list");
   const emptyStateEl = document.getElementById("admin-empty-state");
@@ -38,21 +29,60 @@
   };
 
   const form = document.getElementById("announcement-form");
+  const publishButton = document.getElementById("publish-button");
   const saveDraftButton = document.getElementById("save-draft-button");
   const clearFormButton = document.getElementById("clear-form-button");
   const newAnnouncementButton = document.getElementById("new-announcement-button");
+  const accountAvatarEl = document.getElementById("account-status-avatar");
+  const accountStatusTextEl = document.getElementById("account-status-text");
+  const avatarFallback = "../assets/account-placeholder.svg";
 
   let currentUser = null;
   let currentItems = [];
   let isBusy = false;
   let unsubscribeAuthListener = function () {};
 
+  function redirectToAccessPage() {
+    window.location.href = "../auth/index.html?next=" + encodeURIComponent("../admin/index.html");
+  }
+
+  function resolveAvatar(user) {
+    if (!user) {
+      return avatarFallback;
+    }
+
+    const meta = user.user_metadata || {};
+    const name = meta.full_name || user.email || "Staff User";
+    return (
+      meta.avatar_url ||
+      meta.picture ||
+      meta.photo_url ||
+      ("https://ui-avatars.com/api/?name=" +
+        encodeURIComponent(name) +
+        "&background=13226f&color=ffffff")
+    );
+  }
+
+  function updateAccountBadge(user) {
+    if (!accountAvatarEl || !accountStatusTextEl) {
+      return;
+    }
+
+    accountAvatarEl.src = resolveAvatar(user);
+    accountAvatarEl.onerror = function () {
+      accountAvatarEl.src = avatarFallback;
+    };
+
+    accountStatusTextEl.textContent = user ? "Logged in" : "Not logged in";
+    accountStatusTextEl.classList.toggle("is-logged-in", Boolean(user));
+  }
+
   function setBusy(nextBusy) {
     isBusy = nextBusy;
-    loginButton.disabled = nextBusy;
-    registerButton.disabled = nextBusy;
-    logoutButton.disabled = nextBusy || !currentUser;
     saveDraftButton.disabled = nextBusy;
+    publishButton.disabled = nextBusy;
+    clearFormButton.disabled = nextBusy;
+    newAnnouncementButton.disabled = nextBusy;
   }
 
   function showNotice(message, tone) {
@@ -64,25 +94,6 @@
   function clearNotice() {
     noticeEl.textContent = "";
     noticeEl.className = "notice is-hidden";
-  }
-
-  function setAuthStatus(message, isError) {
-    authStatusEl.textContent = message;
-    authStatusEl.className = isError ? "notice notice-error" : "notice notice-soft";
-  }
-
-  function setSignedInUI(signedIn) {
-    adminAppEl.classList.toggle("is-hidden", !signedIn);
-    logoutButton.disabled = !signedIn || isBusy;
-
-    if (signedIn && currentUser) {
-      setAuthStatus("Signed in as " + (currentUser.email || "staff user") + ".", false);
-    } else {
-      setAuthStatus("Sign in with staff credentials to manage announcements.", false);
-      listEl.innerHTML = "";
-      emptyStateEl.classList.add("is-hidden");
-      clearNotice();
-    }
   }
 
   function resetForm() {
@@ -202,127 +213,25 @@
     }
   }
 
-  async function refreshSession() {
+  async function initializeSession() {
+    if (!api.isConfigured()) {
+      redirectToAccessPage();
+      return false;
+    }
+
     const sessionResult = await api.getSession();
-
-    if (sessionResult.error) {
-      currentUser = null;
-      setSignedInUI(false);
-      setAuthStatus(sessionResult.error.message || "Unable to verify session.", true);
-      return;
+    if (sessionResult.error || !sessionResult.user) {
+      updateAccountBadge(null);
+      redirectToAccessPage();
+      return false;
     }
 
-    currentUser = sessionResult.user || null;
-    setSignedInUI(Boolean(currentUser));
-
-    if (currentUser) {
-      await renderList();
-    }
+    currentUser = sessionResult.user;
+    updateAccountBadge(currentUser);
+    adminAppEl.hidden = false;
+    await renderList();
+    return true;
   }
-
-  loginForm.addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    if (!api.isConfigured()) {
-      setAuthStatus("Supabase config is missing. Update supabase-config.js first.", true);
-      return;
-    }
-
-    const email = emailField.value.trim();
-    const password = passwordField.value;
-
-    if (!email || !password) {
-      setAuthStatus("Email and password are required.", true);
-      return;
-    }
-
-    setBusy(true);
-
-    try {
-      const signInResult = await api.signIn(email, password);
-      if (signInResult.error) {
-        setAuthStatus(signInResult.error.message || "Sign in failed.", true);
-        return;
-      }
-
-      passwordField.value = "";
-      await refreshSession();
-      showNotice("Signed in successfully.", "success");
-    } catch (error) {
-      setAuthStatus(error.message || "Sign in failed.", true);
-    } finally {
-      setBusy(false);
-    }
-  });
-
-  registerButton.addEventListener("click", async function () {
-    if (!api.isConfigured()) {
-      setAuthStatus("Supabase config is missing. Update supabase-config.js first.", true);
-      return;
-    }
-
-    const fullName = fullNameField.value.trim();
-    const email = emailField.value.trim();
-    const password = passwordField.value;
-
-    if (!email || !password) {
-      setAuthStatus("Email and password are required to register.", true);
-      return;
-    }
-
-    setBusy(true);
-
-    try {
-      const registerResult = await api.registerStaff(email, password, fullName);
-      if (registerResult.error) {
-        setAuthStatus(registerResult.error.message || "Registration failed.", true);
-        return;
-      }
-
-      passwordField.value = "";
-
-      if (registerResult.data && registerResult.data.session) {
-        setAuthStatus(
-          "Account created. Your staff profile is pending activation. Ask an admin to set you active.",
-          false
-        );
-        await refreshSession();
-      } else {
-        setAuthStatus(
-          "Account created. Check your email to confirm, then sign in. Staff activation is still required.",
-          false
-        );
-      }
-
-      showNotice("Registration submitted.", "success");
-    } catch (error) {
-      setAuthStatus(error.message || "Registration failed.", true);
-    } finally {
-      setBusy(false);
-    }
-  });
-
-  logoutButton.addEventListener("click", async function () {
-    if (!currentUser) {
-      return;
-    }
-
-    setBusy(true);
-
-    try {
-      const signOutResult = await api.signOut();
-      if (signOutResult.error) {
-        setAuthStatus(signOutResult.error.message || "Sign out failed.", true);
-        return;
-      }
-
-      currentUser = null;
-      setSignedInUI(false);
-      setAuthStatus("Signed out.", false);
-    } finally {
-      setBusy(false);
-    }
-  });
 
   saveDraftButton.addEventListener("click", async function () {
     const item = readForm("draft");
@@ -332,6 +241,7 @@
       return;
     }
 
+    setBusy(true);
     try {
       await api.saveAnnouncement(item, "draft");
       await renderList();
@@ -339,6 +249,8 @@
       resetForm();
     } catch (error) {
       showNotice(error.message || "Could not save draft.", "error");
+    } finally {
+      setBusy(false);
     }
   });
 
@@ -356,6 +268,7 @@
       return;
     }
 
+    setBusy(true);
     try {
       const saved = await api.saveAnnouncement(item, "publish");
       await renderList();
@@ -369,6 +282,8 @@
       resetForm();
     } catch (error) {
       showNotice(error.message || "Could not publish announcement.", "error");
+    } finally {
+      setBusy(false);
     }
   });
 
@@ -402,6 +317,7 @@
       return;
     }
 
+    setBusy(true);
     try {
       if (action === "publish") {
         await api.saveAnnouncement(item, "publish");
@@ -430,21 +346,20 @@
       }
     } catch (error) {
       showNotice(error.message || "Action failed.", "error");
+    } finally {
+      setBusy(false);
     }
   });
 
-  if (!api.isConfigured()) {
-    setSignedInUI(false);
-    setAuthStatus("Supabase config is missing. Update supabase-config.js first.", true);
-    return;
-  }
-
   unsubscribeAuthListener = api.onAuthStateChange(function (session) {
-    currentUser = session ? session.user : null;
-    setSignedInUI(Boolean(currentUser));
-    if (currentUser) {
-      renderList();
+    const user = session ? session.user : null;
+    if (!user) {
+      updateAccountBadge(null);
+      redirectToAccessPage();
+      return;
     }
+    currentUser = user;
+    updateAccountBadge(currentUser);
   });
 
   window.addEventListener("beforeunload", function () {
@@ -452,5 +367,6 @@
   });
 
   resetForm();
-  refreshSession();
+  updateAccountBadge(null);
+  initializeSession();
 })();

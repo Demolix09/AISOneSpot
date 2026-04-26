@@ -41,9 +41,28 @@
 
           <nav class="nav" data-nav aria-label="Primary">
             <a href="../index.html">Home</a>
-            <a href="../events-update/index.html">Public Announcements</a>
-            <a href="index.html" aria-current="page">Staff Admin</a>
+            <a href="../events-update/index.html">Announcements</a>
+            <a href="../upcoming-news/index.html">News &amp; Events</a>
+            <a href="../google-schedule/index.html">Google Schedule</a>
+            <a href="../after-school-programs/index.html">After-School Programs</a>
           </nav>
+
+          <div class="account-corner">
+            <button
+              class="account-button"
+              type="button"
+              id="account-status-button"
+              aria-label="Open staff access"
+            >
+              <img
+                class="account-avatar"
+                id="account-status-avatar"
+                src="../assets/account-placeholder.svg"
+                alt="Account avatar"
+              />
+            </button>
+            <div class="account-status-text" id="account-status-text">Not logged in</div>
+          </div>
         </div>
       </header>
 
@@ -61,34 +80,7 @@
 
         <section class="section">
           <div class="section-inner">
-            <section class="panel" id="auth-panel">
-              <div class="card-meta">Staff authentication</div>
-              <h3>Sign in to manage announcements</h3>
-              <p id="auth-status" class="notice notice-soft">Checking session...</p>
-              <form id="staff-login-form" class="form-mock">
-                <div class="admin-form-grid">
-                  <div class="field">
-                    <label for="staff-full-name">Full name</label>
-                    <input id="staff-full-name" type="text" placeholder="Staff member name" />
-                  </div>
-                  <div class="field">
-                    <label for="staff-email">Staff email</label>
-                    <input id="staff-email" type="email" placeholder="name@school.edu" required />
-                  </div>
-                  <div class="field">
-                    <label for="staff-password">Password</label>
-                    <input id="staff-password" type="password" required />
-                  </div>
-                </div>
-                <div class="admin-form-actions">
-                  <button class="button button-primary" type="submit" id="staff-login-button">Sign in</button>
-                  <button class="button button-secondary" type="button" id="staff-register-button">Register</button>
-                  <button class="button button-secondary" type="button" id="staff-logout-button">Sign out</button>
-                </div>
-              </form>
-            </section>
-
-            <div id="admin-app" class="is-hidden">
+            <div id="admin-app" hidden>
               <div class="admin-toolbar">
                 <div class="admin-toolbar-copy">
                   <div class="small-label">Controls</div>
@@ -220,6 +212,7 @@
             <div>
               <h3>Useful links</h3>
               <ul class="footer-links">
+                <li><a href="../auth/index.html">Staff access page</a></li>
                 <li><a href="../events-update/index.html">Public announcements page</a></li>
                 <li><a href="../db/announcements_schema.sql">Schema draft</a></li>
               </ul>
@@ -239,6 +232,7 @@
     <script src="../script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../supabase-config.js"></script>
+    <script src="../account-status.js"></script>
     <script src="../announcements.js"></script>
     <script src="admin.js"></script>
   </body>

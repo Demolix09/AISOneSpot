@@ -46,6 +46,18 @@
             <a href="../google-schedule/index.html">Google Schedule</a>
             <a href="../after-school-programs/index.html">After-School Programs</a>
           </nav>
+
+          <div class="account-corner">
+            <button class="account-button" type="button" id="account-status-button" aria-label="Open staff access">
+              <img
+                class="account-avatar"
+                id="account-status-avatar"
+                src="../assets/account-placeholder.svg"
+                alt="Account avatar"
+              />
+            </button>
+            <div class="account-status-text" id="account-status-text">Not logged in</div>
+          </div>
         </div>
       </header>
 
@@ -204,5 +216,8 @@
     </div>
 
     <script src="../script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="../account-status.js"></script>
   </body>
 </html>

@@ -8,7 +8,9 @@
   const listEl = document.getElementById("public-announcements-list");
   const emptyEl = document.getElementById("public-announcements-empty");
   const filterButtons = Array.from(document.querySelectorAll("[data-filter]"));
+  const staffPanelEl = document.getElementById("staff-publishing-panel");
   let activeFilter = "all";
+  let unsubscribeAuthListener = function () {};
 
   function priorityClass(priority) {
     if (priority === "urgent") return "urgent";
@@ -60,6 +62,25 @@
     }
   }
 
+  async function syncStaffPublishingPanel() {
+    if (!staffPanelEl) {
+      return;
+    }
+
+    staffPanelEl.hidden = true;
+
+    if (!api.isConfigured() || typeof api.getStaffAccessStatus !== "function") {
+      return;
+    }
+
+    try {
+      const access = await api.getStaffAccessStatus();
+      staffPanelEl.hidden = !Boolean(access && access.allowed);
+    } catch (_error) {
+      staffPanelEl.hidden = true;
+    }
+  }
+
   filterButtons.forEach(function (button) {
     button.addEventListener("click", function () {
       const filter = button.getAttribute("data-filter") || "all";
@@ -75,5 +96,14 @@
     render(activeFilter);
   }, 60000);
 
+  unsubscribeAuthListener = api.onAuthStateChange(function () {
+    syncStaffPublishingPanel();
+  });
+
+  window.addEventListener("beforeunload", function () {
+    unsubscribeAuthListener();
+  });
+
+  syncStaffPublishingPanel();
   render("all");
 })();

@@ -347,6 +347,52 @@
     }
   }
 
+  async function getStaffAccessStatus() {
+    const sessionResult = await getSession();
+
+    if (sessionResult.error) {
+      return {
+        allowed: false,
+        user: null,
+        profile: null,
+        error: sessionResult.error
+      };
+    }
+
+    if (!sessionResult.user) {
+      return {
+        allowed: false,
+        user: null,
+        profile: null,
+        error: null
+      };
+    }
+
+    const client = requireClient();
+    const profileResult = await client
+      .from("staff_profiles")
+      .select("id, staff_role, is_active")
+      .eq("id", sessionResult.user.id)
+      .maybeSingle();
+
+    if (profileResult.error) {
+      return {
+        allowed: false,
+        user: sessionResult.user,
+        profile: null,
+        error: profileResult.error
+      };
+    }
+
+    const profile = profileResult.data || null;
+    return {
+      allowed: Boolean(profile && profile.is_active),
+      user: sessionResult.user,
+      profile: profile,
+      error: null
+    };
+  }
+
   async function getPublicAnnouncements(category) {
     const client = requireClient();
     let query = client
@@ -549,6 +595,7 @@
     getAdminAnnouncements: getAdminAnnouncements,
     getPublicAnnouncements: getPublicAnnouncements,
     getSession: getSession,
+    getStaffAccessStatus: getStaffAccessStatus,
     hydrateScheduledAnnouncements: hydrateScheduledAnnouncements,
     isConfigured: isConfigured,
     onAuthStateChange: onAuthStateChange,

@@ -46,6 +46,18 @@
             <a href="google-schedule/index.html">Google Schedule</a>
             <a href="after-school-programs/index.html">After-School Programs</a>
           </nav>
+
+          <div class="account-corner">
+            <button class="account-button" type="button" id="account-status-button" aria-label="Open staff access">
+              <img
+                class="account-avatar"
+                id="account-status-avatar"
+                src="assets/account-placeholder.svg"
+                alt="Account avatar"
+              />
+            </button>
+            <div class="account-status-text" id="account-status-text">Not logged in</div>
+          </div>
         </div>
       </header>
 
@@ -226,7 +238,7 @@
                   <p>The cafeteria menu tool will be available soon.</p>
                 </div>
 
-                <a class="panel quick-tool" href="admin/index.html">
+                <a class="panel quick-tool" href="auth/index.html">
                   <div class="card-meta">Staff Admin</div>
                   <h3>Manage Announcements</h3>
                   <p>Sign in to create, edit, publish, and delete announcements.</p>
@@ -263,6 +275,28 @@
             </div>
             <div class="panel">
               <div class="sk-instagram-feed" data-embed-id="25676103"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-inner">
+            <div class="panel">
+              <div class="card-meta">Feedback</div>
+              <h3>Help us improve AIS OneSpot</h3>
+              <p>
+                Share your experience using the website so we can keep improving it for students,
+                families, and staff.
+              </p>
+              <div style="margin-top: 1rem">
+                <a
+                  class="button button-primary"
+                  href="https://docs.google.com/forms/d/e/1FAIpQLSdH-JF2HaNJDtz6LZTbqF02sL8ci-SiSfjTSLn-wf0FQjzaKw/viewform?usp=dialog"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  >Open feedback form</a
+                >
+              </div>
             </div>
           </div>
         </section>
@@ -313,6 +347,9 @@
     </div>
 
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="account-status.js"></script>
     <script src="https://widgets.sociablekit.com/instagram-feed/widget.js" defer></script>
   </body>
 </html>

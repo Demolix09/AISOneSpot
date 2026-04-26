@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Staff Access | AIS OneSpot</title>
+    <meta
+      name="description"
+      content="AIS OneSpot staff access page for account registration, sign in, and sign out."
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="topbar-copy">American International School of Costa Rica</div>
+          <div>Staff account access</div>
+        </div>
+      </div>
+
+      <header class="header">
+        <div class="header-inner">
+          <a class="brand" href="../index.html" aria-label="AIS OneSpot Home">
+            <img class="brand-mark" src="../assets/logo-square.png" alt="AIS crest" />
+            <div class="brand-copy">
+              <strong>AIS OneSpot</strong>
+              <span>Staff account center</span>
+            </div>
+          </a>
+
+          <button
+            class="menu-toggle"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded="false"
+            data-menu-toggle
+          >
+            <span>Menu</span>
+          </button>
+
+          <nav class="nav" data-nav aria-label="Primary">
+            <a href="../index.html">Home</a>
+            <a href="../events-update/index.html">Announcements</a>
+            <a href="../upcoming-news/index.html">News &amp; Events</a>
+            <a href="../google-schedule/index.html">Google Schedule</a>
+            <a href="../after-school-programs/index.html">After-School Programs</a>
+          </nav>
+
+          <div class="account-corner">
+            <button class="account-button" type="button" id="account-status-button" aria-label="Account status">
+              <img
+                class="account-avatar"
+                id="account-status-avatar"
+                src="../assets/account-placeholder.svg"
+                alt="Account avatar"
+              />
+            </button>
+            <div class="account-status-text" id="account-status-text">Not logged in</div>
+          </div>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="page-hero">
+          <div class="page-hero-inner">
+            <div class="eyebrow">Staff Access</div>
+            <h1>Sign up, log in, and log out</h1>
+            <p>
+              Use this page for account access. After signing in, continue to Staff Admin to manage
+              announcements.
+            </p>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-inner">
+            <section class="panel">
+              <div class="card-meta">Authentication</div>
+              <h3>Staff account access</h3>
+              <p id="auth-status" class="notice notice-soft">Checking session...</p>
+              <form id="staff-login-form" class="form-mock">
+                <div class="admin-form-grid">
+                  <div class="field">
+                    <label for="staff-full-name">Full name</label>
+                    <input id="staff-full-name" type="text" placeholder="Staff member name" />
+                  </div>
+                  <div class="field">
+                    <label for="staff-email">Staff email</label>
+                    <input id="staff-email" type="email" placeholder="name@school.edu" required />
+                  </div>
+                  <div class="field">
+                    <label for="staff-password">Password</label>
+                    <input id="staff-password" type="password" required />
+                  </div>
+                </div>
+                <div class="admin-form-actions">
+                  <button class="button button-primary" type="submit" id="staff-login-button">Sign in</button>
+                  <button class="button button-secondary" type="button" id="staff-register-button">Register</button>
+                  <button class="button button-secondary" type="button" id="staff-logout-button">Sign out</button>
+                  <a class="button button-secondary" href="../admin/index.html">Open Staff Admin</a>
+                </div>
+              </form>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <div class="footer-grid">
+            <div>
+              <h3>Note</h3>
+              <p>Staff accounts need an active profile in <code>staff_profiles</code> to manage announcements.</p>
+            </div>
+            <div>
+              <h3>Next step</h3>
+              <p>After successful sign in, open Staff Admin to create and publish announcements.</p>
+            </div>
+            <div>
+              <h3>Support</h3>
+              <p>If registration succeeds but publishing fails, ask an admin to activate your profile.</p>
+            </div>
+          </div>
+          <div class="footer-note">
+            &copy; 2026 AIS OneSpot. Staff access center.
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="../script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../supabase-config.js"></script>
+    <script src="../account-status.js"></script>
+    <script src="../announcements.js"></script>
+    <script src="auth.js"></script>
+  </body>
+</html>
