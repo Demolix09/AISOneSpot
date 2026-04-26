@@ -15,7 +15,7 @@
       <div class="topbar">
         <div class="topbar-inner">
           <div class="topbar-copy">American International School of Costa Rica</div>
-          <div>Staff account access</div>
+          <div id="access-topbar-text">Account authentication</div>
         </div>
       </div>
 
@@ -77,7 +77,8 @@
           <div class="section-inner">
             <section class="panel">
               <div class="card-meta">Authentication</div>
-              <h3>Staff account access</h3>
+              <h3>Account authentication</h3>
+              <p id="staff-access-state" class="notice notice-soft">Staff access status: checking...</p>
               <p id="auth-status" class="notice notice-soft">Checking session...</p>
               <form id="staff-login-form" class="form-mock">
                 <div class="admin-form-grid">
@@ -93,14 +94,38 @@
                     <label for="staff-password">Password</label>
                     <input id="staff-password" type="password" required />
                   </div>
+                  <div class="field">
+                    <label for="staff-password-confirm">Confirm password</label>
+                    <input id="staff-password-confirm" type="password" />
+                  </div>
                 </div>
                 <div class="admin-form-actions">
                   <button class="button button-primary" type="submit" id="staff-login-button">Sign in</button>
                   <button class="button button-secondary" type="button" id="staff-register-button">Register</button>
                   <button class="button button-secondary" type="button" id="staff-logout-button">Sign out</button>
-                  <a class="button button-secondary" href="../admin/index.html">Open Staff Admin</a>
+                  <a class="button button-secondary" id="open-admin-link" href="../admin/index.html" hidden>Open Staff Admin</a>
                 </div>
               </form>
+            </section>
+
+            <section class="panel" id="email-code-panel" hidden>
+              <div class="card-meta">Email Verification</div>
+              <h3>Enter your verification code</h3>
+              <p id="email-code-hint" class="notice notice-soft">
+                We will send a verification code to your email.
+              </p>
+              <div class="field">
+                <label for="email-code-input">Verification code</label>
+                <input id="email-code-input" type="text" inputmode="numeric" autocomplete="one-time-code" />
+              </div>
+              <div class="admin-form-actions">
+                <button class="button button-primary" type="button" id="verify-email-code-button">
+                  Verify code
+                </button>
+                <button class="button button-secondary" type="button" id="resend-email-code-button">
+                  Resend code
+                </button>
+              </div>
             </section>
           </div>
         </section>

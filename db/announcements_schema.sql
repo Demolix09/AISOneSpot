@@ -33,10 +33,13 @@ create table if not exists public.staff_profiles (
   full_name text not null,
   email text,
   staff_role text,
-  is_active boolean not null default true,
+  is_active boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.staff_profiles
+  alter column is_active set default false;
 
 create table if not exists public.announcements (
   id uuid primary key default gen_random_uuid(),
@@ -91,6 +94,55 @@ begin
 end;
 $$;
 
+create or replace function public.sync_staff_profile_from_auth_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  -- Only create/update staff profile after the email is confirmed.
+  if new.email_confirmed_at is null then
+    return new;
+  end if;
+
+  insert into public.staff_profiles (id, full_name, email, staff_role, is_active)
+  values (
+    new.id,
+    coalesce(
+      nullif(trim(new.raw_user_meta_data ->> 'full_name'), ''),
+      split_part(coalesce(new.email, ''), '@', 1),
+      'Staff User'
+    ),
+    new.email,
+    coalesce(
+      nullif(trim(new.raw_user_meta_data ->> 'staff_role'), ''),
+      'staff'
+    ),
+    false
+  )
+  on conflict (id) do update
+    set full_name = excluded.full_name,
+        email = excluded.email,
+        staff_role = excluded.staff_role,
+        updated_at = now();
+
+  return new;
+end;
+$$;
+
+drop trigger if exists on_auth_user_created_staff_profile on auth.users;
+create trigger on_auth_user_created_staff_profile
+after insert on auth.users
+for each row execute function public.sync_staff_profile_from_auth_user();
+
+drop trigger if exists on_auth_user_confirmed_staff_profile on auth.users;
+create trigger on_auth_user_confirmed_staff_profile
+after update of email_confirmed_at on auth.users
+for each row
+when (old.email_confirmed_at is null and new.email_confirmed_at is not null)
+execute function public.sync_staff_profile_from_auth_user();
+
 drop trigger if exists staff_profiles_set_updated_at on public.staff_profiles;
 create trigger staff_profiles_set_updated_at
 before update on public.staff_profiles
@@ -125,6 +177,7 @@ alter table public.announcement_attachments enable row level security;
 grant usage on schema public to anon, authenticated;
 grant select on public.announcements to anon, authenticated;
 grant select on public.public_announcements_feed to anon, authenticated;
+grant select, insert, update on public.staff_profiles to authenticated;
 
 drop policy if exists announcements_public_read on public.announcements;
 create policy announcements_public_read
@@ -163,12 +216,7 @@ create policy staff_profiles_staff_read
 on public.staff_profiles
 for select
 using (
-  exists (
-    select 1
-    from public.staff_profiles sp
-    where sp.id = auth.uid()
-      and sp.is_active = true
-  )
+  auth.uid() = id
 );
 
 drop policy if exists staff_profiles_self_insert on public.staff_profiles;

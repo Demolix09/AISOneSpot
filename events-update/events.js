@@ -94,7 +94,12 @@
 
   setInterval(function () {
     render(activeFilter);
+    syncStaffPublishingPanel();
   }, 60000);
+
+  setInterval(function () {
+    syncStaffPublishingPanel();
+  }, 15000);
 
   unsubscribeAuthListener = api.onAuthStateChange(function () {
     syncStaffPublishingPanel();

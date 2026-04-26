@@ -41,6 +41,7 @@
   let currentItems = [];
   let isBusy = false;
   let unsubscribeAuthListener = function () {};
+  let accessCheckIntervalId = null;
 
   function redirectToAccessPage() {
     window.location.href = "../auth/index.html?next=" + encodeURIComponent("../admin/index.html");
@@ -213,6 +214,23 @@
     }
   }
 
+  async function requireActiveStaffAccess() {
+    if (typeof api.getStaffAccessStatus !== "function") {
+      return true;
+    }
+
+    const access = await api.getStaffAccessStatus();
+    if (!access || access.error || !access.user || !access.allowed) {
+      updateAccountBadge(access && access.user ? access.user : null);
+      redirectToAccessPage();
+      return false;
+    }
+
+    currentUser = access.user;
+    updateAccountBadge(currentUser);
+    return true;
+  }
+
   async function initializeSession() {
     if (!api.isConfigured()) {
       redirectToAccessPage();
@@ -227,7 +245,11 @@
     }
 
     currentUser = sessionResult.user;
-    updateAccountBadge(currentUser);
+    const hasAccess = await requireActiveStaffAccess();
+    if (!hasAccess) {
+      return false;
+    }
+
     adminAppEl.hidden = false;
     await renderList();
     return true;
@@ -358,15 +380,23 @@
       redirectToAccessPage();
       return;
     }
+
     currentUser = user;
-    updateAccountBadge(currentUser);
+    requireActiveStaffAccess();
   });
 
   window.addEventListener("beforeunload", function () {
     unsubscribeAuthListener();
+    if (accessCheckIntervalId) {
+      window.clearInterval(accessCheckIntervalId);
+    }
   });
 
   resetForm();
   updateAccountBadge(null);
   initializeSession();
+
+  accessCheckIntervalId = window.setInterval(function () {
+    requireActiveStaffAccess();
+  }, 15000);
 })();

@@ -17,11 +17,26 @@
     public: "Public",
     staff: "Staff only"
   };
+  const ALLOWED_REGISTRATION_DOMAINS = ["aiscr.org", "ais.ed.cr"];
 
   let cachedClient = null;
 
   function clone(value) {
     return JSON.parse(JSON.stringify(value));
+  }
+
+  function normalizeEmail(value) {
+    return String(value || "").trim().toLowerCase();
+  }
+
+  function isAllowedRegistrationEmail(email) {
+    const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail || normalizedEmail.indexOf("@") < 0) {
+      return false;
+    }
+
+    const domain = normalizedEmail.split("@").pop();
+    return ALLOWED_REGISTRATION_DOMAINS.indexOf(domain) >= 0;
   }
 
   function getConfig() {
@@ -284,46 +299,116 @@
     });
   }
 
-  async function registerStaff(email, password, fullName) {
-    const client = requireClient();
-    const signUpResult = await client.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          full_name: (fullName || "").trim()
-        }
+  function buildEmailRedirectUrl() {
+    try {
+      if (!window || !window.location) {
+        return null;
       }
+
+      const protocol = String(window.location.protocol || "");
+      if (protocol !== "http:" && protocol !== "https:") {
+        return null;
+      }
+
+      const url = new URL(window.location.href);
+      url.search = "";
+      url.hash = "";
+      url.pathname = url.pathname.replace(/\/auth\/index\.html$/i, "/auth/index.html");
+      return url.toString();
+    } catch (_error) {
+      return null;
+    }
+  }
+
+  async function registerStaff(email, password, fullName) {
+    const normalizedEmail = normalizeEmail(email);
+    if (!isAllowedRegistrationEmail(normalizedEmail)) {
+      return {
+        data: {
+          user: null,
+          session: null
+        },
+        error: new Error("Use your school email to register (@aiscr.org or @ais.ed.cr).")
+      };
+    }
+
+    const client = requireClient();
+    const emailRedirectTo = buildEmailRedirectUrl();
+    const options = {
+      data: {
+        full_name: (fullName || "").trim()
+      }
+    };
+
+    if (emailRedirectTo) {
+      options.emailRedirectTo = emailRedirectTo;
+    }
+
+    const signUpResult = await client.auth.signUp({
+      email: normalizedEmail,
+      password: password,
+      options: options
     });
 
-    if (signUpResult.error) {
-      return signUpResult;
-    }
-
-    const user = signUpResult.data && signUpResult.data.user ? signUpResult.data.user : null;
-    if (!user) {
-      return signUpResult;
-    }
-
-    // Best effort: create a pending staff profile. Activation remains admin-controlled.
-    const profileResult = await client
-      .from("staff_profiles")
-      .upsert(
-        {
-          id: user.id,
-          full_name: (fullName || "").trim() || "Staff User",
-          email: user.email || email,
-          staff_role: "staff",
-          is_active: false
-        },
-        { onConflict: "id" }
-      );
-
-    if (profileResult.error) {
-      signUpResult.profileError = profileResult.error;
-    }
-
     return signUpResult;
+  }
+
+  async function verifyEmailCode(email, code) {
+    const client = requireClient();
+    const normalizedEmail = String(email || "").trim();
+    const normalizedCode = String(code || "").trim();
+
+    if (!normalizedEmail || !normalizedCode) {
+      return {
+        data: null,
+        error: new Error("Email and verification code are required.")
+      };
+    }
+
+    // Prefer signup verification, then fallback to email OTP verification.
+    let result = await client.auth.verifyOtp({
+      email: normalizedEmail,
+      token: normalizedCode,
+      type: "signup"
+    });
+
+    if (!result.error) {
+      return result;
+    }
+
+    result = await client.auth.verifyOtp({
+      email: normalizedEmail,
+      token: normalizedCode,
+      type: "email"
+    });
+
+    return result;
+  }
+
+  async function resendVerificationCode(email) {
+    const client = requireClient();
+    const normalizedEmail = String(email || "").trim();
+
+    if (!normalizedEmail) {
+      return {
+        data: null,
+        error: new Error("Email is required.")
+      };
+    }
+
+    const emailRedirectTo = buildEmailRedirectUrl();
+    const params = {
+      type: "signup",
+      email: normalizedEmail
+    };
+
+    if (emailRedirectTo) {
+      params.options = {
+        emailRedirectTo: emailRedirectTo
+      };
+    }
+
+    return client.auth.resend(params);
   }
 
   async function signOut() {
@@ -390,6 +475,73 @@
       user: sessionResult.user,
       profile: profile,
       error: null
+    };
+  }
+
+  async function ensureStaffProfile() {
+    const sessionResult = await getSession();
+    if (sessionResult.error) {
+      return {
+        created: false,
+        profile: null,
+        error: sessionResult.error
+      };
+    }
+
+    const user = sessionResult.user;
+    if (!user) {
+      return {
+        created: false,
+        profile: null,
+        error: new Error("You must be signed in.")
+      };
+    }
+
+    const access = await getStaffAccessStatus();
+    if (access.profile) {
+      return {
+        created: false,
+        profile: access.profile,
+        error: null
+      };
+    }
+
+    const client = requireClient();
+    const fullName = (
+      (user.user_metadata && user.user_metadata.full_name) ||
+      (user.email ? user.email.split("@")[0] : "") ||
+      "Staff User"
+    ).trim();
+
+    const insertResult = await client
+      .from("staff_profiles")
+      .upsert(
+        {
+          id: user.id,
+          full_name: fullName,
+          email: user.email || null,
+          staff_role: "staff",
+          is_active: false
+        },
+        {
+          onConflict: "id",
+          ignoreDuplicates: true
+        }
+      );
+
+    if (insertResult.error) {
+      return {
+        created: false,
+        profile: null,
+        error: insertResult.error
+      };
+    }
+
+    const nextAccess = await getStaffAccessStatus();
+    return {
+      created: true,
+      profile: nextAccess.profile || null,
+      error: nextAccess.error || null
     };
   }
 
@@ -596,13 +748,17 @@
     getPublicAnnouncements: getPublicAnnouncements,
     getSession: getSession,
     getStaffAccessStatus: getStaffAccessStatus,
+    ensureStaffProfile: ensureStaffProfile,
     hydrateScheduledAnnouncements: hydrateScheduledAnnouncements,
     isConfigured: isConfigured,
     onAuthStateChange: onAuthStateChange,
     saveAnnouncement: saveAnnouncement,
+    resendVerificationCode: resendVerificationCode,
     registerStaff: registerStaff,
+    isAllowedRegistrationEmail: isAllowedRegistrationEmail,
     signIn: signIn,
     signOut: signOut,
+    verifyEmailCode: verifyEmailCode,
     statusLabel: statusLabel,
     toDateValue: toDateValue,
     visibilityLabel: visibilityLabel
