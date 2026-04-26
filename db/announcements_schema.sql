@@ -121,6 +121,11 @@ alter table public.staff_profiles enable row level security;
 alter table public.announcements enable row level security;
 alter table public.announcement_attachments enable row level security;
 
+-- Required grants so anonymous visitors can read public announcements.
+grant usage on schema public to anon, authenticated;
+grant select on public.announcements to anon, authenticated;
+grant select on public.public_announcements_feed to anon, authenticated;
+
 drop policy if exists announcements_public_read on public.announcements;
 create policy announcements_public_read
 on public.announcements

@@ -436,7 +436,11 @@
 
   async function getPublicAnnouncements(category) {
     const client = requireClient();
-    let query = client.from("public_announcements_feed").select("*");
+    let query = client
+      .from("announcements")
+      .select("id,title,body,category,priority,pinned,publish_at,published_at,expires_at,status,visibility")
+      .eq("status", "published")
+      .eq("visibility", "public");
 
     if (category && category !== "all") {
       query = query.eq("category", normalizeCategory(category));
@@ -447,7 +451,7 @@
       throw result.error;
     }
 
-    return sortPublic((result.data || []).map(feedRowToItem));
+    return sortPublic((result.data || []).map(rowToItem));
   }
 
   async function getAdminAnnouncements() {
