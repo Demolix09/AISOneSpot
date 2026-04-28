@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Announcements | AIS OneSpot</title>
+    <title>Staff Contacts | AIS OneSpot</title>
     <meta
       name="description"
-      content="Campus announcements for AIS OneSpot with sample public filters and a future-ready staff publishing panel."
+      content="AIS OneSpot staff contacts directory with searchable names, roles, and school emails."
     />
     <link rel="stylesheet" href="../styles.css" />
   </head>
@@ -44,11 +44,11 @@
 
           <nav class="nav" data-nav aria-label="Primary">
             <a href="../index.html">Home</a>
-            <a href="index.html" aria-current="page">Announcements</a>
+            <a href="../events-update/index.html">Announcements</a>
             <a href="../upcoming-news/index.html">News &amp; Events</a>
             <a href="../google-schedule/index.html">Google Schedule</a>
             <a href="../after-school-programs/index.html">After-School Programs</a>
-            <a href="../staff-contacts/index.html">Staff Contacts</a>
+            <a href="index.html" aria-current="page">Staff Contacts</a>
           </nav>
 
           <div class="account-corner">
@@ -68,10 +68,11 @@
       <main class="main">
         <section class="page-hero">
           <div class="page-hero-inner">
-            <div class="eyebrow">Announcements</div>
-            <h1>Campus announcements</h1>
+            <div class="eyebrow">Directory</div>
+            <h1>Staff contacts</h1>
             <p>
-              Stay informed with official school updates from one central announcements feed.
+              Search the AIS staff directory by name, role, or school email. Emails may be missing
+              for some roles.
             </p>
           </div>
         </section>
@@ -79,79 +80,64 @@
         <section class="section">
           <div class="section-inner">
             <div class="section-heading">
-              <div class="small-label">Filters</div>
-              <h2>Browse by type</h2>
+              <div class="small-label">Search</div>
+              <h2>Find staff quickly</h2>
               <p>
-                The public feed reads from Supabase. Only published, active, public announcements
-                appear here.
+                This directory stays in alphabetical order by name for easier browsing.
               </p>
             </div>
 
-            <div class="filter-panel">
-              <button class="filter-button is-active" type="button" data-filter="all">All</button>
-              <button class="filter-button" type="button" data-filter="urgent">Urgent</button>
-              <button class="filter-button" type="button" data-filter="general">General</button>
-              <button class="filter-button" type="button" data-filter="students">Students</button>
-              <button class="filter-button" type="button" data-filter="staff">Staff</button>
-            </div>
-
-            <div class="announcement-grid">
-              <div class="announcement-list">
-                <div class="empty-state is-hidden" id="public-announcements-empty">
-                  No public announcements match this filter yet.
-                </div>
-                <div id="public-announcements-list" class="announcement-list"></div>
+            <section class="panel">
+              <div class="field">
+                <label for="staff-contact-search">Search by name, role, or email</label>
+                <input id="staff-contact-search" type="search" placeholder="Start typing to filter contacts..." />
               </div>
+            </section>
 
-              <aside class="panel" id="staff-publishing-panel" hidden>
-                <div class="card-meta">Staff publishing panel</div>
-                <h3>Staff publishing workflow</h3>
+            <div class="contacts-layout">
+              <section class="panel">
+                <div class="card-meta">Directory</div>
+                <div id="staff-contacts-empty" class="empty-state is-hidden">
+                  No staff contacts match this search.
+                </div>
+                <div id="staff-contacts-list" class="staff-contacts-list"></div>
+              </section>
+
+              <aside class="panel" id="staff-contacts-editor" hidden>
+                <div class="card-meta">Staff editor</div>
+                <h3>Manage contacts</h3>
                 <p>
-                  Authorized staff can draft, publish, schedule, archive, and delete announcements.
-                  The public feed updates from the same records.
+                  Staff with active access can add, edit, and remove contacts. School email is
+                  optional.
                 </p>
 
-                <div style="margin: 1rem 0 1.2rem">
-                  <a class="button button-primary" href="../auth/index.html">Staff access</a>
-                </div>
+                <div id="staff-contacts-notice" class="notice is-hidden"></div>
 
-                <form class="form-mock">
+                <form id="staff-contact-form" class="form-mock">
+                  <input id="staff-contact-id" type="hidden" />
+
                   <div class="field">
-                    <label for="title">Announcement Title (short text)</label>
-                    <input id="title" type="text" value="Create and manage this in Staff Admin" readonly />
+                    <label for="staff-contact-name">Name</label>
+                    <input id="staff-contact-name" type="text" required />
                   </div>
 
                   <div class="field">
-                    <label for="message">Message (multi-line text)</label>
-                    <textarea id="message" readonly>Published records appear on this public page automatically.</textarea>
+                    <label for="staff-contact-role">Role / Department</label>
+                    <input id="staff-contact-role" type="text" required />
                   </div>
 
                   <div class="field">
-                    <label>Visibility</label>
-                    <div class="radio-row">
-                      <div class="radio-pill">Public feed</div>
-                      <div class="radio-pill">Staff only</div>
-                    </div>
+                    <label for="staff-contact-email">School email (optional)</label>
+                    <input id="staff-contact-email" type="email" placeholder="name@aiscr.org" />
                   </div>
 
-                  <div class="field">
-                    <label for="timestamp">Timestamp</label>
-                    <input id="timestamp" type="text" value="Generated by the stored record" readonly />
-                  </div>
-
-                  <div class="field">
-                    <label>Priority</label>
-                    <div class="radio-row">
-                      <div class="radio-pill">Normal</div>
-                      <div class="radio-pill">High / Urgent</div>
-                    </div>
-                  </div>
-
-                  <div class="field">
-                    <label for="category">Category</label>
-                    <select id="category" disabled>
-                      <option>General</option>
-                    </select>
+                  <div class="admin-form-actions">
+                    <button class="button button-primary" type="submit" id="staff-contact-save-button">
+                      Save contact
+                    </button>
+                    <button class="button button-secondary" type="button" id="staff-contact-clear-button">
+                      Clear form
+                    </button>
                   </div>
                 </form>
               </aside>
@@ -179,16 +165,17 @@
             <div>
               <h3>Navigate</h3>
               <ul class="footer-links">
+                <li><a href="../events-update/index.html">Announcements</a></li>
                 <li><a href="../upcoming-news/index.html">News &amp; Events</a></li>
-                <li><a href="../after-school-programs/index.html">After-School Programs</a></li>
                 <li><a href="../google-schedule/index.html">Google Schedule</a></li>
-                <li><a href="../staff-contacts/index.html">Staff Contacts</a></li>
+                <li><a href="../after-school-programs/index.html">After-School Programs</a></li>
+                <li><a href="index.html">Staff Contacts</a></li>
                 <li><a href="../index.html">Home</a></li>
               </ul>
             </div>
             <div>
-              <h3>Announcements</h3>
-              <p>Staff-authored announcements with category filtering for families and students.</p>
+              <h3>Directory</h3>
+              <p>Public staff contact list with staff-only editing controls.</p>
             </div>
           </div>
           <div class="footer-note">
@@ -203,6 +190,6 @@
     <script src="../supabase-config.js"></script>
     <script src="../account-status.js"></script>
     <script src="../announcements.js"></script>
-    <script src="events.js"></script>
+    <script src="staff-contacts.js"></script>
   </body>
 </html>

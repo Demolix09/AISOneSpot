@@ -15,7 +15,8 @@
     pathName.indexOf("/events-update/") >= 0 ||
     pathName.indexOf("/google-schedule/") >= 0 ||
     pathName.indexOf("/after-school-programs/") >= 0 ||
-    pathName.indexOf("/upcoming-news/") >= 0;
+    pathName.indexOf("/upcoming-news/") >= 0 ||
+    pathName.indexOf("/staff-contacts/") >= 0;
   const authPath = pageInSubfolder ? "../auth/index.html" : "auth/index.html";
 
   if (buttonEl) {

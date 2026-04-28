@@ -239,6 +239,34 @@
     };
   }
 
+  function rowToStaffContact(row) {
+    return {
+      id: row.id || "",
+      fullName: row.full_name || "",
+      roleTitle: row.role_title || "",
+      schoolEmail: row.school_email || "",
+      createdAt: row.created_at || "",
+      updatedAt: row.updated_at || ""
+    };
+  }
+
+  function sortStaffContacts(items) {
+    return items.sort(function (a, b) {
+      return String(a.fullName || "").localeCompare(String(b.fullName || ""), "en", {
+        sensitivity: "base"
+      });
+    });
+  }
+
+  function normalizeStaffContactInput(input) {
+    return {
+      id: String((input && input.id) || "").trim(),
+      fullName: String((input && input.fullName) || "").trim(),
+      roleTitle: String((input && input.roleTitle) || "").trim(),
+      schoolEmail: normalizeEmail((input && input.schoolEmail) || "")
+    };
+  }
+
   function normalizeForm(input) {
     return {
       id: input.id || "",
@@ -289,6 +317,21 @@
     }
 
     return sessionResult.user;
+  }
+
+  async function requireActiveStaffUser() {
+    const user = await requireStaffUser();
+    const access = await getStaffAccessStatus();
+
+    if (access.error) {
+      throw access.error;
+    }
+
+    if (!access.allowed) {
+      throw new Error("Active staff access is required for this action.");
+    }
+
+    return user;
   }
 
   async function signIn(email, password) {
@@ -545,6 +588,109 @@
     };
   }
 
+  async function getStaffContacts() {
+    const client = requireClient();
+    const result = await client
+      .from("staff_contacts")
+      .select("id,full_name,role_title,school_email,created_at,updated_at");
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    return sortStaffContacts((result.data || []).map(rowToStaffContact));
+  }
+
+  async function findStaffContact(id) {
+    if (!id) {
+      return null;
+    }
+
+    const client = requireClient();
+    const result = await client
+      .from("staff_contacts")
+      .select("id,full_name,role_title,school_email,created_at,updated_at")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    return result.data || null;
+  }
+
+  async function saveStaffContact(input) {
+    const client = requireClient();
+    const user = await requireActiveStaffUser();
+    const normalized = normalizeStaffContactInput(input);
+
+    if (!normalized.fullName) {
+      throw new Error("Name is required.");
+    }
+
+    if (!normalized.roleTitle) {
+      throw new Error("Role is required.");
+    }
+
+    let result;
+
+    if (normalized.id) {
+      const existing = await findStaffContact(normalized.id);
+      if (!existing) {
+        throw new Error("This staff contact no longer exists.");
+      }
+
+      result = await client
+        .from("staff_contacts")
+        .update({
+          full_name: normalized.fullName,
+          role_title: normalized.roleTitle,
+          school_email: normalized.schoolEmail || null,
+          updated_by: user.id
+        })
+        .eq("id", normalized.id)
+        .select("id,full_name,role_title,school_email,created_at,updated_at")
+        .single();
+    } else {
+      result = await client
+        .from("staff_contacts")
+        .insert({
+          full_name: normalized.fullName,
+          role_title: normalized.roleTitle,
+          school_email: normalized.schoolEmail || null,
+          created_by: user.id,
+          updated_by: user.id
+        })
+        .select("id,full_name,role_title,school_email,created_at,updated_at")
+        .single();
+    }
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    return rowToStaffContact(result.data);
+  }
+
+  async function deleteStaffContact(id) {
+    if (!id) {
+      return;
+    }
+
+    const client = requireClient();
+    await requireActiveStaffUser();
+
+    const result = await client
+      .from("staff_contacts")
+      .delete()
+      .eq("id", id);
+
+    if (result.error) {
+      throw result.error;
+    }
+  }
+
   async function getPublicAnnouncements(category) {
     const client = requireClient();
     let query = client
@@ -740,12 +886,14 @@
 
   window.AISAnnouncements = {
     categoryLabel: categoryLabel,
+    deleteStaffContact: deleteStaffContact,
     deleteAnnouncement: deleteAnnouncement,
     escapeHtml: escapeHtml,
     formatDateTime: formatDateTime,
     fromDateValue: fromDateValue,
     getAdminAnnouncements: getAdminAnnouncements,
     getPublicAnnouncements: getPublicAnnouncements,
+    getStaffContacts: getStaffContacts,
     getSession: getSession,
     getStaffAccessStatus: getStaffAccessStatus,
     ensureStaffProfile: ensureStaffProfile,
@@ -755,6 +903,7 @@
     saveAnnouncement: saveAnnouncement,
     resendVerificationCode: resendVerificationCode,
     registerStaff: registerStaff,
+    saveStaffContact: saveStaffContact,
     isAllowedRegistrationEmail: isAllowedRegistrationEmail,
     signIn: signIn,
     signOut: signOut,

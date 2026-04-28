@@ -9,6 +9,8 @@ Key goals:
 - staff can sign in and manage announcements
 - public users can browse published announcements
 - announcements can be filtered by category on the public page
+- public users can browse staff contacts in alphabetical order
+- active staff can manage staff contacts
 
 ## Tech Stack
 
@@ -26,9 +28,12 @@ No framework build step is required for current pages.
 - Staff auth logic: `auth/auth.js`
 - Staff admin page: `admin/index.html`
 - Staff admin logic: `admin/admin.js`
+- Staff contacts page: `staff-contacts/index.html`
+- Staff contacts logic: `staff-contacts/staff-contacts.js`
 - Shared announcements API: `announcements.js`
 - Supabase config (local): `supabase-config.js`
 - Supabase SQL schema: `db/announcements_schema.sql`
+- Staff contacts setup SQL: `db/staff_contacts_setup.sql`
 - Product design notes: `docs/announcements-phase-2.md` (announcements guide)
 
 ## Data Model Notes
@@ -59,6 +64,7 @@ Without a matching `staff_profiles` row, staff users will fail RLS checks for ad
 - Public page queries `public_announcements_feed`.
 - Admin page requires staff sign-in and active staff profile.
 - Scheduled announcements are promoted to published state when staff/admin views trigger hydration.
+- Staff contacts page is public for viewing/search and staff-only for edits.
 
 ## Guardrails For Future Changes
 
