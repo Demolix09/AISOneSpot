@@ -82,6 +82,30 @@ select {
   opacity: 0.85;
 }
 
+.topbar-feedback {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.topbar-feedback-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.topbar-feedback-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .header {
   position: sticky;
   top: 0;
@@ -999,6 +1023,11 @@ select {
   .topbar-inner {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .topbar-feedback {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .brand-mark {
